@@ -69,7 +69,8 @@ executable arity-experiment
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
 
-    ghc-options: -rtsopts -ddump-stg-final -ddump-cmm -dumpdir dumps -ddump-to-file app/BenchCmm.cmm -debug  -ddump-cmm-from-stg -dsuppress-ticks -fproc-alignment=64
+    ghc-options: -rtsopts -ddump-stg-final -ddump-cmm -dumpdir dumps -ddump-to-file  -ddump-cmm-from-stg -dsuppress-ticks -fproc-alignment=64 app/BenchCmm.cmm -g -debug
+    -- app/BenchCmm.cmm
 
     -- Other library packages from which modules are imported.
     build-depends:
