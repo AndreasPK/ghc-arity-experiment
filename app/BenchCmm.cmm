@@ -1,0 +1,59 @@
+// {-# GHC_OPTIONS -dsuppress-all #-}
+
+#include "Cmm.h"
+#include "MachDeps.h"
+
+applyFunctionDirect(P_ f, P_ xs)
+{
+    W_ f_addr;
+    f_addr = %GET_ENTRY(UNTAG(f));
+
+    loop:
+        W_ tag;
+        tag = xs & 7;
+        xs = UNTAG(xs);
+
+        //Nil
+        if(tag == 1) {
+            return (0);
+        } else {
+            // n = n+1;
+            // (P_ f_evald) = call stg_ap_0_fast (f);
+            P_ x;
+            x = P_[xs+8];
+            xs = P_[xs+16];
+            // P_ f_untag;
+            // call stg_ap_pv_fast(f,x);
+            // f_untag = UNTAG(f);
+            // (P_ r) = call %GET_ENTRY(f_untag) (x);
+            call f_addr(x);
+            goto loop;
+        }
+}
+
+
+applyFunctionHsLike(P_ f, P_ xs)
+{
+        W_ tag, n;
+        n = 0;
+    loop:
+        tag = xs & 7;
+        xs = UNTAG(xs);
+
+        //Nil
+        if(tag == 1) {
+            f = f_new;
+            return (n);
+        } else {
+            // n = n+1;
+            // (P_ f_evald) = call stg_ap_0_fast (f);
+            P_ x;
+            x = P_[xs+8];
+            xs = P_[xs+16];
+            // P_ f_untag;
+            call stg_ap_pv_fast(f,x);
+            // f_untag = UNTAG(f_evald);
+            // (P_ r) = call f_untag (x);
+            goto loop;
+        }
+}
